@@ -46,7 +46,8 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("codespace_eval_sexpr"):
 		get_viewport().set_input_as_handled()
-		rep(code_edit.text)
+		if not code_edit.text.is_empty():
+			rep(code_edit.text)
 
 
 func _read_str(input: String) -> StType:
