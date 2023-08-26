@@ -121,8 +121,7 @@ func _pr_str(input: StType) -> String:
 		for element in input.value:
 			list_elements.push_back(_pr_str(element))
 		
-		var processed := "(" + " ".join(list_elements) + ")"
-		return processed
+		return "(" + " ".join(list_elements) + ")"
 	else:
 		push_error("Unhandled type")
 		return ""
