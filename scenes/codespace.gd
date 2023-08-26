@@ -74,25 +74,28 @@ func _read_form(reader: Reader) -> StType:
 		';':
 			return null
 		')':
-			push_error("Unexpected `)`")
-			return null
+			return StErr.new("Unexpected `)`")
 		'(':
 			return _read_list(reader)
 		_:
 			return _read_atom(reader)
 
-func _read_list(reader) -> StList:
+func _read_list(reader) -> StType:
 	var list := StList.new()
 
 	reader.next()
 	while reader.peek() != ')':
 		if reader.peek().is_empty():
-			push_error("Unclosed list")
-			return null
+			return StErr.new("Unclosed list")
 		
 		var value = _read_form(reader)
-		if value != null:
-			list.value.push_back(value)
+
+		if value is StErr:
+			return value
+		if value == null:
+			continue
+
+		list.value.push_back(value)
 		reader.next()
 
 	return list
@@ -114,8 +117,8 @@ func _read_atom(reader) -> StType:
 		return StSymbol.new(token)
 
 func _pr_str(input: StType) -> String:
-	if input == null:
-		return ""
+	if input is StErr:
+		return "ERROR: " + input.what
 	elif input is StInt:
 		return str(input.value)
 	elif input is StFloat:
