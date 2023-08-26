@@ -55,7 +55,7 @@ func _read_str(input: String) -> StType:
 	return _read_form(reader)
 
 func _tokenize(input: String) -> Array[String]:
-	var matches := token_regex.search_all(input)
+	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
 	# Array[RegExMatch] to Array[String]
 	var string_tokens: Array[String] = []
