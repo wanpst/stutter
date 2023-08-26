@@ -143,6 +143,10 @@ func eval(input: StType) -> StType:
 	return input
 
 func put(input: StType) -> String:
+	# normally, this means we found nothing but a comment
+	if input == null:
+		return ""
+
 	return _pr_str(input)
 
 func rep(input: String) -> void:
