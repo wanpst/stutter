@@ -16,7 +16,10 @@ class Reader extends RefCounted:
 		return tokens[current_token-1]
 	
 	func peek() -> String:
-		return tokens[current_token]
+		if tokens.size() >= current_token + 1:
+			return tokens[current_token]
+		else:
+			return ""
 
 
 func _ready() -> void:
@@ -67,6 +70,12 @@ func _tokenize(input: String) -> Array[String]:
 
 func _read_form(reader: Reader) -> StType:
 	match reader.peek()[0]:
+		# comment
+		';':
+			return null
+		')':
+			push_error("Unexpected `)`")
+			return null
 		'(':
 			return _read_list(reader)
 		_:
@@ -75,8 +84,16 @@ func _read_form(reader: Reader) -> StType:
 func _read_list(reader) -> StList:
 	var list := StList.new()
 
-	while reader.next() != null and reader.peek() != ')':
-		list.value.push_back(_read_form(reader))
+	reader.next()
+	while reader.peek() != ')':
+		if reader.peek().is_empty():
+			push_error("Unclosed list")
+			return null
+		
+		var value = _read_form(reader)
+		if value != null:
+			list.value.push_back(value)
+		reader.next()
 
 	return list
 
@@ -89,7 +106,9 @@ func _read_atom(reader) -> StType:
 		return StSymbol.new(token)
 
 func _pr_str(input: StType) -> String:
-	if input is StSymbol:
+	if input == null:
+		return ""
+	elif input is StSymbol:
 		return input.value
 	elif input is StInt:
 		return str(input.value)
