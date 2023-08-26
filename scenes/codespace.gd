@@ -104,24 +104,30 @@ func _read_atom(reader) -> StType:
 		return StInt.new(token.to_int())
 	elif token.is_valid_float():
 		return StFloat.new(token.to_float())
+	elif token == "true":
+		return StBool.new(true)
+	elif token == "false":
+		return StBool.new(false)
+	elif token == "nil":
+		return StNil.new()
 	else:
 		return StSymbol.new(token)
 
 func _pr_str(input: StType) -> String:
 	if input == null:
 		return ""
-	elif input is StSymbol:
-		return input.value
 	elif input is StInt:
 		return str(input.value)
 	elif input is StFloat:
 		return str(input.value).pad_decimals(1)
+	elif input is StBool:
+		return str(input.value)
+	elif input is StNil:
+		return "nil"
+	elif input is StSymbol:
+		return input.value
 	elif input is StList:
-		var list_elements: Array[String] = []
-		for element in input.value:
-			list_elements.push_back(_pr_str(element))
-		
-		return "(" + " ".join(list_elements) + ")"
+		return "(" + " ".join(input.value.map(_pr_str)) + ")"
 	else:
 		push_error("Unhandled type")
 		return ""
