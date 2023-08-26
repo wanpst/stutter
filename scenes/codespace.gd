@@ -102,6 +102,8 @@ func _read_atom(reader) -> StType:
 
 	if token.is_valid_int():
 		return StInt.new(token.to_int())
+	elif token.is_valid_float():
+		return StFloat.new(token.to_float())
 	else:
 		return StSymbol.new(token)
 
@@ -112,6 +114,8 @@ func _pr_str(input: StType) -> String:
 		return input.value
 	elif input is StInt:
 		return str(input.value)
+	elif input is StFloat:
+		return str(input.value).pad_decimals(1)
 	elif input is StList:
 		var list_elements: Array[String] = []
 		for element in input.value:
