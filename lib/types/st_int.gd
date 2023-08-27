@@ -5,3 +5,6 @@ var value: int
 
 func _init(p_value: int = 0) -> void:
 	value = p_value
+
+func _to_string() -> String:
+	return str(value)

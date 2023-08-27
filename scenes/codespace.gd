@@ -116,25 +116,6 @@ func _read_atom(reader) -> StType:
 	else:
 		return StSymbol.new(token)
 
-func _pr_str(input: StType) -> String:
-	if input is StErr:
-		return "ERROR: " + input.what
-	elif input is StInt:
-		return str(input.value)
-	elif input is StFloat:
-		return str(input.value).pad_decimals(1)
-	elif input is StBool:
-		return str(input.value)
-	elif input is StNil:
-		return "nil"
-	elif input is StSymbol:
-		return input.value
-	elif input is StList:
-		return "(" + " ".join(input.value.map(_pr_str)) + ")"
-	else:
-		push_error("Unhandled type")
-		return ""
-
 
 func read(input: String) -> StType:
 	return _read_str(input)
@@ -147,7 +128,7 @@ func put(input: StType) -> String:
 	if input == null:
 		return ""
 
-	return _pr_str(input)
+	return StType.pr_str(input)
 
 func rep(input: String) -> void:
 	print(put(eval(read(input))))
