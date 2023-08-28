@@ -16,7 +16,7 @@ class Reader:
 		return tokens[current_token-1]
 	
 	func peek() -> String:
-		if tokens.size() >= current_token + 1:
+		if current_token < tokens.size():
 			return tokens[current_token]
 		else:
 			return ""
