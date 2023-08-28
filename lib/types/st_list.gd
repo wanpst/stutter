@@ -8,3 +8,7 @@ func _init(p_elements: Array[StType] = []) -> void:
 
 func _to_string() -> String:
 	return "(" + " ".join(elements.map(StType.pr_str)) + ")"
+
+
+func push_back(value: StType) -> void:
+	elements.push_back(value)

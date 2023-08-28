@@ -95,7 +95,7 @@ func _read_list(reader) -> StType:
 		if value == null:
 			continue
 
-		list.value.push_back(value)
+		list.push_back(value)
 		reader.next()
 
 	return list
