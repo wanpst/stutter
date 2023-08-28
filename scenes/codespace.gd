@@ -80,7 +80,7 @@ func _read_form(reader: Reader) -> StType:
 		_:
 			return _read_atom(reader)
 
-func _read_list(reader) -> StType:
+func _read_list(reader: Reader) -> StType:
 	var list := StList.new()
 
 	reader.next()
@@ -100,7 +100,7 @@ func _read_list(reader) -> StType:
 
 	return list
 
-func _read_atom(reader) -> StType:
+func _read_atom(reader: Reader) -> StType:
 	var token = reader.peek()
 
 	if token.is_valid_int():
