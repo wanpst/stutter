@@ -8,8 +8,8 @@ class Reader extends RefCounted:
 	var tokens: Array[String]
 	var current_token: int = 0
 
-	func _init(p_tokens: Array[String] = []) -> void:
-		tokens = p_tokens
+	func _init(p_tokens: Array = []) -> void:
+		tokens.assign(p_tokens)
 
 	func next() -> String:
 		current_token += 1
@@ -57,16 +57,14 @@ func _read_str(input: String) -> StType:
 	var reader = Reader.new(_tokenize(input))
 	return _read_form(reader)
 
-func _tokenize(input: String) -> Array[String]:
+# FIXME: the return type for this function should really be Array[String],
+# but Godot has forced my hand; see godotengine/godot issue #72566 
+func _tokenize(input: String) -> Array:
 	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
-	# Array[RegExMatch] to Array[String]
-	var string_tokens: Array[String] = []
-	for regex_match in matches:
-		const CAPTURING_GROUP = 1
-		string_tokens.push_back(regex_match.get_string(CAPTURING_GROUP))
-
-	return string_tokens
+	# extract the substrings out of the regex matches
+	const CAPTURING_GROUP = 1
+	return matches.map(func (m): return m.get_string(CAPTURING_GROUP))
 
 func _read_form(reader: Reader) -> StType:
 	match reader.peek()[0]:
