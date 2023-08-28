@@ -2,6 +2,7 @@ extends Control
 
 @onready var code_edit := $CodeEdit as CodeEdit
 var token_regex: RegEx = RegEx.new()
+var string_regex: RegEx = RegEx.new()
 
 
 class Reader:
@@ -45,6 +46,7 @@ func _ready() -> void:
 	#   characters (e.g. symbols, numbers, "true", "false", and "nil") and is sort
 	#   of the inverse of the one above that captures special characters (tokenized).
 	token_regex.compile("[\\s ,]*(~@|[\\[\\]{}()'`~@]|\"(?:[\\\\].|[^\\\\\"])*\"?|;.*|[^\\s \\[\\]{}()'\"`~@,;]*)")
+	string_regex.compile("^\"((?:[\\\\].|[^\\\\\"])*)\"$")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("codespace_eval_sexpr"):
@@ -71,8 +73,10 @@ func _read_form(reader: Reader) -> StType:
 		# comment
 		';':
 			return null
+		# errors
 		')':
 			return StErr.new("Unexpected `)`")
+		# readable
 		'(':
 			return _read_list(reader)
 		_:
@@ -100,6 +104,7 @@ func _read_list(reader: Reader) -> StType:
 
 func _read_atom(reader: Reader) -> StType:
 	var token = reader.peek()
+	var string_match := string_regex.search(token)
 
 	if token.is_valid_int():
 		return StInt.new(token.to_int())
@@ -111,6 +116,10 @@ func _read_atom(reader: Reader) -> StType:
 		return StBool.new(false)
 	elif token == "nil":
 		return StNil.new()
+	elif string_match:
+		return StString.new(string_match.get_string(1).c_unescape())
+	elif token[0] == '"':
+		return StErr.new("Unclosed string")
 	else:
 		return StSymbol.new(token)
 
@@ -126,7 +135,7 @@ func put(input: StType) -> String:
 	if input == null:
 		return ""
 
-	return StType.pr_str(input)
+	return StType.pr_str(input, true)
 
 func rep(input: String) -> void:
 	print(put(eval(read(input))))
