@@ -14,8 +14,8 @@ class Reader:
 
 	func next() -> String:
 		current_token += 1
-		return tokens[current_token-1]
-	
+		return tokens[current_token - 1]
+
 	func peek() -> String:
 		if current_token < tokens.size():
 			return tokens[current_token]
@@ -24,8 +24,11 @@ class Reader:
 
 
 func _ready() -> void:
-	token_regex.compile("[\\s ,]*(~@|[\\[\\]{}()'`~@]|\"(?:[\\\\].|[^\\\\\"])*\"?|;.*|[^\\s \\[\\]{}()'\"`~@,;]*)")
-	string_regex.compile("^\"((?:[\\\\].|[^\\\\\"])*)\"$")
+	token_regex.compile(
+		'[\\s ,]*(~@|[\\[\\]{}()\'`~@]|"(?:[\\\\].|[^\\\\"])*"?|;.*|[^\\s \\[\\]{}()\'"`~@,;]*)'
+	)
+	string_regex.compile('^"((?:[\\\\].|[^\\\\"])*)"$')
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("codespace_eval_sexpr"):
@@ -38,36 +41,39 @@ func _read_str(input: String) -> StType:
 	var reader = Reader.new(_tokenize(input))
 	return _read_form(reader)
 
+
 # FIXME: the return type for this function should really be Array[String],
-# but Godot has forced my hand; see godotengine/godot issue #72566 
+# but Godot has forced my hand; see godotengine/godot issue #72566
 func _tokenize(input: String) -> Array:
 	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
 	# extract the substrings out of the regex matches
-	return matches.map(func (m): return m.get_string(1))
+	return matches.map(func(m): return m.get_string(1))
+
 
 func _read_form(reader: Reader) -> StType:
 	match reader.peek()[0]:
 		# comment
-		';':
+		";":
 			return null
 		# errors
-		')':
+		")":
 			return StErr.new("Unexpected `)`")
 		# readable
-		'(':
+		"(":
 			return _read_list(reader)
 		_:
 			return _read_atom(reader)
+
 
 func _read_list(reader: Reader) -> StType:
 	var list := StList.new()
 
 	reader.next()
-	while reader.peek() != ')':
+	while reader.peek() != ")":
 		if reader.peek().is_empty():
 			return StErr.new("Unclosed list")
-		
+
 		var value = _read_form(reader)
 
 		if value is StErr:
@@ -79,6 +85,7 @@ func _read_list(reader: Reader) -> StType:
 		reader.next()
 
 	return list
+
 
 func _read_atom(reader: Reader) -> StType:
 	var token = reader.peek()
@@ -105,8 +112,10 @@ func _read_atom(reader: Reader) -> StType:
 func read(input: String) -> StType:
 	return _read_str(input)
 
+
 func eval(input: StType) -> StType:
 	return input
+
 
 func put(input: StType) -> String:
 	# normally, this means we found nothing but a comment
@@ -114,6 +123,7 @@ func put(input: StType) -> String:
 		return ""
 
 	return StType.pr_str(input, true)
+
 
 func rep(input: String) -> void:
 	print(put(eval(read(input))))

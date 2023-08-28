@@ -1,6 +1,7 @@
 class_name StType
 extends RefCounted
 
+
 static func pr_str(input: StType, print_readably := false) -> String:
 	# FIXME: ideally, this would be in StString's _to_string. but Godot says
 	# it takes no arguments, and making a replacement function to use for
@@ -11,5 +12,5 @@ static func pr_str(input: StType, print_readably := false) -> String:
 			return '\"' + input.value.json_escape() + '\"'
 		else:
 			return input.value
-	
+
 	return str(input)
