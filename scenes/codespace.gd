@@ -4,7 +4,7 @@ extends Control
 var token_regex: RegEx = RegEx.new()
 
 
-class Reader extends RefCounted:
+class Reader:
 	var tokens: Array[String]
 	var current_token: int = 0
 
