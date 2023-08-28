@@ -44,8 +44,7 @@ func _tokenize(input: String) -> Array:
 	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
 	# extract the substrings out of the regex matches
-	const CAPTURING_GROUP = 1
-	return matches.map(func (m): return m.get_string(CAPTURING_GROUP))
+	return matches.map(func (m): return m.get_string(1))
 
 func _read_form(reader: Reader) -> StType:
 	match reader.peek()[0]:
