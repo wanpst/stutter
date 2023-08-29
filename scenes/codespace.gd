@@ -39,7 +39,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _read_str(input: String) -> StType:
 	var reader = Reader.new(_tokenize(input))
-	return _read_form(reader)
+	if reader.tokens.is_empty():
+		return null
+	else:
+		return _read_form(reader)
 
 
 # FIXME: the return type for this function should really be Array[String],
@@ -48,14 +51,16 @@ func _tokenize(input: String) -> Array:
 	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
 	# extract the substrings out of the regex matches
-	return matches.map(func(m): return m.get_string(1))
+	var ignore_func = func(m):
+		return m.get_string(1)[0] != ";"
+	var substring_func = func(m):
+		return m.get_string(1)
+
+	return matches.filter(ignore_func).map(substring_func)
 
 
 func _read_form(reader: Reader) -> StType:
 	match reader.peek()[0]:
-		# comment
-		";":
-			return null
 		# errors
 		")":
 			return StErr.new("Unexpected `)`")
