@@ -65,20 +65,24 @@ func _read_form(reader: Reader) -> StType:
 		# errors
 		")":
 			return StErr.new("Unexpected `)`")
+		"]":
+			return StErr.new("Unexpected `]`")
 		# readable
 		"(":
-			return _read_list(reader)
+			return _read_list(reader, StList.new(), "(", ")")
+		"[":
+			return _read_list(reader, StVector.new(), "[", "]")
 		_:
 			return _read_atom(reader)
 
 
-func _read_list(reader: Reader) -> StType:
-	var list := StList.new()
-
+func _read_list(reader: Reader, seq: StList, start: String, end: String) -> StType:
+	assert(reader.peek() == start, "Tried to read missing `" + start + "`")
+	
 	reader.next()
-	while reader.peek() != ")":
+	while reader.peek() != end:
 		if reader.peek().is_empty():
-			return StErr.new("Unclosed list")
+			return StErr.new("Unclosed `" + start + "`")
 
 		var value = _read_form(reader)
 
@@ -87,10 +91,10 @@ func _read_list(reader: Reader) -> StType:
 		if value == null:
 			continue
 
-		list.push_back(value)
+		seq.push_back(value)
 		reader.next()
 
-	return list
+	return seq
 
 
 func _read_atom(reader: Reader) -> StType:
