@@ -51,9 +51,10 @@ func _read_str(input: String) -> StType:
 func _tokenize(input: String) -> Array:
 	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
-	# extract the useful substrings out of the regex matches
+	# callables to keep only the useful substrings in the regex matches
 	var ignore_func = func(m):
-		return not m.get_string(1).begins_with(";")
+		var substring: String = m.get_string(1)
+		return not substring.begins_with(";") and not substring.is_empty()
 	var substring_func = func(m):
 		return m.get_string(1)
 
