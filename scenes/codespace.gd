@@ -89,8 +89,6 @@ func _read_list(reader: Reader, seq: StList, start: String, end: String) -> StTy
 
 		if value is StErr:
 			return value
-		if value == null:
-			continue
 
 		seq.push_back(value)
 		reader.next()
