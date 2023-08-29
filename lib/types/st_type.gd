@@ -13,6 +13,6 @@ static func pr_str(input: StType, print_readably := false) -> String:
 			# NOTE: c_escape() will escape single quotes; this is close enough!
 			return '\"' + input.value.json_escape() + '\"'
 		else:
-			return input.value
+			return '\"' + input.value + '\"'
 
 	return str(input)
