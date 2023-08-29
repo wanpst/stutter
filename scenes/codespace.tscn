@@ -12,19 +12,50 @@ grow_vertical = 2
 script = ExtResource("1_muhnm")
 metadata/_edit_lock_ = true
 
-[node name="CodeEdit" type="CodeEdit" parent="."]
-custom_minimum_size = Vector2(400, 320)
+[node name="SplitContainer" type="SplitContainer" parent="."]
+custom_minimum_size = Vector2(540, 400)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -21.0
-offset_right = 100.0
-offset_bottom = 21.0
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
+split_offset = 84
+vertical = true
+
+[node name="CodeEdit" type="CodeEdit" parent="SplitContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+scroll_smooth = true
+scroll_past_end_of_file = true
+gutters_draw_line_numbers = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
+
+[node name="OutputPanel" type="PanelContainer" parent="SplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SplitContainer/OutputPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="OutputLabel" type="RichTextLabel" parent="SplitContainer/OutputPanel/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 2
+bbcode_enabled = true
+scroll_following = true
+context_menu_enabled = true
+selection_enabled = true

@@ -1,6 +1,7 @@
 extends Control
 
-@onready var code_edit := $CodeEdit as CodeEdit
+@onready var code_edit := $"%CodeEdit" as CodeEdit
+@onready var output_label := $"%OutputLabel" as RichTextLabel
 var token_regex: RegEx = RegEx.new()
 var string_regex: RegEx = RegEx.new()
 
@@ -133,4 +134,6 @@ func put(input: StType) -> String:
 
 
 func rep(input: String) -> void:
-	print(put(eval(read(input))))
+	var result := put(eval(read(input)))
+	output_label.append_text(result + "\n")
+	print(result)
