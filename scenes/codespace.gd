@@ -138,4 +138,5 @@ func put(input: StType) -> String:
 
 func rep(input: String) -> void:
 	var result := put(eval(read(input)))
-	output_label.append_text(result + "\n")
+	if not result.is_empty():
+		output_label.append_text(result + "\n")
