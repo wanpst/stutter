@@ -105,6 +105,8 @@ func _read_atom(reader: Reader) -> StType:
 		return StString.new(string_match.get_string(1).c_unescape())
 	elif token[0] == '"':
 		return StErr.new("Unclosed string")
+	elif token[0] == ":":
+		return StString.new("\u029e" + token.substr(1))
 	else:
 		return StSymbol.new(token)
 

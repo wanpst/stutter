@@ -7,6 +7,8 @@ static func pr_str(input: StType, print_readably := false) -> String:
 	# it takes no arguments, and making a replacement function to use for
 	# every single StType just to move one block of code seems even worse
 	if input is StString:
+		if not input.value.is_empty() and input.value[0] == "\u029e":
+			return ":" + input.value.substr(1)
 		if print_readably:
 			# NOTE: c_escape() will escape single quotes; this is close enough!
 			return '\"' + input.value.json_escape() + '\"'
