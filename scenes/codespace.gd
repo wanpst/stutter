@@ -39,7 +39,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _read_str(input: String) -> StType:
-	var reader = Reader.new(_tokenize(input))
+	var reader := Reader.new(_tokenize(input))
 	if reader.tokens.is_empty():
 		return null
 	else:
@@ -52,10 +52,10 @@ func _tokenize(input: String) -> Array:
 	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
 	# callables to keep only the useful substrings in the regex matches
-	var ignore_func = func(m):
+	var ignore_func := func(m):
 		var substring: String = m.get_string(1)
 		return not substring.begins_with(";") and not substring.is_empty()
-	var substring_func = func(m):
+	var substring_func := func(m):
 		return m.get_string(1)
 
 	return matches.filter(ignore_func).map(substring_func)
@@ -89,7 +89,7 @@ func _read_list(reader: Reader, seq: StList, start: String, end: String) -> StTy
 		if reader.peek().is_empty():
 			return StErr.new("Unclosed `" + start + "`")
 
-		var value = _read_form(reader)
+		var value := _read_form(reader)
 
 		if value is StErr:
 			return value
@@ -101,7 +101,7 @@ func _read_list(reader: Reader, seq: StList, start: String, end: String) -> StTy
 
 
 func _read_atom(reader: Reader) -> StType:
-	var token = reader.peek()
+	var token := reader.peek()
 	var string_match := string_regex.search(token)
 
 	if token.is_valid_int():
