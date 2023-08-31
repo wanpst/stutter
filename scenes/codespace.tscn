@@ -37,6 +37,12 @@ scroll_past_end_of_file = true
 gutters_draw_line_numbers = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
+auto_brace_completion_pairs = {
+"\"": "\"",
+"(": ")",
+"[": "]",
+"{": "}"
+}
 
 [node name="OutputPanel" type="PanelContainer" parent="VSplitContainer"]
 layout_mode = 2
