@@ -68,11 +68,15 @@ func _read_form(reader: Reader) -> StType:
 			return StErr.new("Unexpected `)`")
 		"]":
 			return StErr.new("Unexpected `]`")
+		"}":
+			return StErr.new("Unexpected `}`")
 		# readable
 		"(":
 			return _read_list(reader, StList.new(), "(", ")")
 		"[":
 			return _read_list(reader, StVector.new(), "[", "]")
+		"{":
+			return StHashmap.from_seq(_read_list(reader, StList.new(), "{", "}"))
 		_:
 			return _read_atom(reader)
 
