@@ -61,8 +61,46 @@ func _tokenize(input: String) -> Array:
 	return matches.filter(ignore_func).map(substring_func)
 
 
+func _token_to_symbol_list(reader: Reader, symbol: String) -> StType:
+	reader.next()
+	if reader.peek().is_empty():
+		return StErr.new("Unexpected EOF")
+
+	var rest := _read_form(reader)
+	if rest is StErr:
+		return rest
+
+	var result := StList.new()
+	result.push_back(StSymbol.new(symbol))
+	result.push_back(rest)
+	return result
+
+
 func _read_form(reader: Reader) -> StType:
 	match reader.peek()[0]:
+		# macros
+		"'":
+			return _token_to_symbol_list(reader, "quote")
+		"`":
+			return _token_to_symbol_list(reader, "quasiquote")
+		"~":
+			if reader.peek() == "~@":
+				return _token_to_symbol_list(reader, "splice-unquote")
+			return _token_to_symbol_list(reader, "unquote")
+		"@":
+			return _token_to_symbol_list(reader, "deref")
+		"^":
+			reader.next()
+			if reader.peek().is_empty():
+				return StErr.new("Unexpected EOF")
+			var meta := _read_form(reader)
+			if meta is StErr:
+				return meta
+
+			var result := _token_to_symbol_list(reader, "with-meta")
+			if not result is StErr:
+				result.push_back(meta)
+			return result
 		# errors
 		")":
 			return StErr.new("Unexpected `)`")
