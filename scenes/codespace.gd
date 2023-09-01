@@ -114,7 +114,10 @@ func _read_form(reader: Reader) -> StType:
 		"[":
 			return _read_list(reader, StVector.new(), "[", "]")
 		"{":
-			return StHashmap.from_seq(_read_list(reader, StList.new(), "{", "}"))
+			var contents := _read_list(reader, StList.new(), "{", "}")
+			if contents is StErr:
+				return contents
+			return StHashmap.from_seq(contents)
 		_:
 			return _read_atom(reader)
 
