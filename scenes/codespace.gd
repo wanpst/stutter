@@ -35,7 +35,7 @@ func eval_ast(ast: StType) -> StType:
 		if ast.value in repl_env:
 			return repl_env[ast.value]
 		else:
-			return StErr.new("Tried to evaluate unknown symbol")
+			return StErr.new("Tried to evaluate undefined symbol `" + ast.value + "`")
 	elif ast is StList:
 		var evaluated: StList
 		if ast is StVector:
