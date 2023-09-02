@@ -20,7 +20,7 @@ func eval(input: StType) -> StType:
 
 
 func put(input: StType) -> String:
-	# normally, this means we found nothing but a comment
+	# catch-all check for having nothing to do
 	if input == null:
 		return ""
 
