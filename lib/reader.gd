@@ -35,10 +35,10 @@ func _tokenize(input: String) -> Array:
 	var matches: Array[RegExMatch] = token_regex.search_all(input)
 
 	# callables to keep only the useful substrings in the regex matches
-	var ignore_func := func(m):
-		var substring: String = m.get_string(1)
+	var ignore_func := func(m: RegExMatch) -> bool:
+		var substring := m.get_string(1)
 		return not substring.begins_with(";") and not substring.is_empty()
-	var substring_func := func(m):
+	var substring_func := func(m: RegExMatch) -> String:
 		return m.get_string(1)
 
 	return matches.filter(ignore_func).map(substring_func)
