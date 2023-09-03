@@ -3,24 +3,26 @@ extends Control
 @onready var code_edit := $"%CodeEdit" as CodeEdit
 @onready var output_label := $"%OutputLabel" as RichTextLabel
 
-var repl_env := {
-	"+": StLambda.new(func(addends: Array) -> StType:
-		return StInt.new(
-			addends.reduce(func(sum, x): return sum + x)
-		)),
-	"-": StLambda.new(func(subtrahends: Array) -> StType:
-		return StInt.new(
-			subtrahends[0] - subtrahends.slice(1).reduce(func(diff, x): return diff + x)
-		)),
-	"*": StLambda.new(func(factors: Array) -> StType:
-		return StInt.new(
-			factors.reduce(func(product, x): return product * x)
-		)),
-	"/": StLambda.new(func(divs: Array) -> StType:
-		return StInt.new(
-			divs[0] / divs.slice(1).reduce(func(product, x): return product * x)
-		)),
-}
+var repl_env := Env.new()
+
+
+func _ready() -> void:
+	repl_env.eset(StSymbol.new("+"), StLambda.new(
+		func(addends: Array) -> StType:
+			return StInt.new(
+				addends.reduce(func(sum, x): return sum + x))))
+	repl_env.eset(StSymbol.new("-"), StLambda.new(
+		func(subtrahends: Array) -> StType:
+			return StInt.new(
+				subtrahends[0] - subtrahends.slice(1).reduce(func(diff, x): return diff + x))))
+	repl_env.eset(StSymbol.new("*"), StLambda.new(
+		func(factors: Array) -> StType:
+			return StInt.new(
+				factors.reduce(func(product, x): return product * x))))
+	repl_env.eset(StSymbol.new("/"), StLambda.new(
+		func(divs: Array) -> StType:
+			return StInt.new(
+				divs[0] / divs.slice(1).reduce(func(product, x): return product * x))))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -30,12 +32,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			rep(code_edit.text)
 
 
-func eval_ast(ast: StType) -> StType:
+func eval_ast(ast: StType, env: Env) -> StType:
 	if ast is StSymbol:
-		if ast.value in repl_env:
-			return repl_env[ast.value]
-		else:
-			return StErr.new("Tried to evaluate undefined symbol `" + ast.value + "`")
+		return env.eget(ast)
 	elif ast is StList:
 		var evaluated: StList
 		if ast is StVector:
@@ -44,7 +43,7 @@ func eval_ast(ast: StType) -> StType:
 			evaluated = StList.new()
 
 		for element in ast.elements:
-			var element_evaluated = eval(element)
+			var element_evaluated := eval(element, env)
 			if element_evaluated is StErr:
 				return element_evaluated
 			else:
@@ -55,7 +54,7 @@ func eval_ast(ast: StType) -> StType:
 		var evaluated := StHashmap.new()
 
 		for key in ast.elements:
-			evaluated.elements[key] = eval(ast.elements[key])
+			evaluated.elements[key] = eval(ast.elements[key], env)
 			if evaluated.elements[key] is StErr:
 				return evaluated.elements[key]
 
@@ -68,19 +67,41 @@ func read(input: String) -> StType:
 	return Reader.new().read_str(input)
 
 
-func eval(ast: StType) -> StType:
-	if ast is StList and not ast is StVector:
-		if ast.elements.is_empty():
-			return ast
-		else:
-			var evaluated = eval_ast(ast)
-			if evaluated is StErr:
-				return evaluated
-			return evaluated.elements[0].value.call(
-				evaluated.elements.slice(1).map(func(e: StType): return e.value))
-	else:
-		return eval_ast(ast)
+func eval(ast: StType, env: Env) -> StType:
+	if not ast is StList or ast is StVector:
+		return eval_ast(ast, env)
 
+	if ast.elements.is_empty():
+		return ast
+
+	# special forms
+	if ast.elements[0] is StSymbol:
+		match ast.elements[0].value:
+			"def!":
+				var value_evaluated := eval(ast.elements[2], env)
+				if value_evaluated is StErr:
+					return value_evaluated
+				env.eset(ast.elements[1], value_evaluated) 
+				return value_evaluated
+			"let*":
+				var let_env := Env.new(env)
+				for i in range(0, ast.elements[1].elements.size(), 2):
+					var key: StType = ast.elements[1].elements[i]
+					var value: StType = ast.elements[1].elements[i+1]
+					var value_evaluated := eval(value, let_env)
+					if value_evaluated is StErr:
+						return value_evaluated
+					let_env.eset(key, value_evaluated)
+				return eval(ast.elements[2], let_env)
+	
+	# just a function call
+	var evaluated := eval_ast(ast, env)
+	if evaluated is StErr:
+		return evaluated
+		
+	return evaluated.elements[0].value.call(
+		evaluated.elements.slice(1).map(func(e: StType): return e.value))
+	
 
 func put(input: StType) -> String:
 	# catch-all check for having nothing to do
@@ -91,6 +112,6 @@ func put(input: StType) -> String:
 
 
 func rep(input: String) -> void:
-	var result := put(eval(read(input)))
+	var result := put(eval(read(input), repl_env))
 	if not result.is_empty():
 		output_label.append_text(result + "\n")
