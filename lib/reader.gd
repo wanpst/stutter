@@ -132,6 +132,12 @@ func _read_atom() -> StType:
 		return StInt.new(token.to_int())
 	elif token.is_valid_float():
 		return StFloat.new(token.to_float())
+	elif token == "inf":
+		return StFloat.new(INF)
+	elif token == "-inf":
+		return StFloat.new(-INF)
+	elif token == "nan":
+		return StFloat.new(NAN)
 	elif token == "true":
 		return StBool.new(true)
 	elif token == "false":
