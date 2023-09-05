@@ -7,22 +7,10 @@ var repl_env := Env.new()
 
 
 func _ready() -> void:
-	repl_env.eset(StSymbol.new("+"), StLambda.new(
-		func(addends: Array) -> StType:
-			return StInt.new(
-				addends.reduce(func(sum, x): return sum + x))))
-	repl_env.eset(StSymbol.new("-"), StLambda.new(
-		func(subtrahends: Array) -> StType:
-			return StInt.new(
-				subtrahends[0] - subtrahends.slice(1).reduce(func(diff, x): return diff + x))))
-	repl_env.eset(StSymbol.new("*"), StLambda.new(
-		func(factors: Array) -> StType:
-			return StInt.new(
-				factors.reduce(func(product, x): return product * x))))
-	repl_env.eset(StSymbol.new("/"), StLambda.new(
-		func(divs: Array) -> StType:
-			return StInt.new(
-				divs[0] / divs.slice(1).reduce(func(product, x): return product * x))))
+	repl_env.eset(StSymbol.new("+"), StLambda.new(_add))
+	repl_env.eset(StSymbol.new("-"), StLambda.new(_sub))
+	repl_env.eset(StSymbol.new("*"), StLambda.new(_mul))
+	repl_env.eset(StSymbol.new("/"), StLambda.new(_div))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -30,6 +18,46 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		if not code_edit.text.is_empty():
 			rep(code_edit.text)
+
+
+func _add(addends: Array) -> StType:
+	var result = addends.reduce(func(sum, x): return sum + x)
+
+	if result is float:
+		return StFloat.new(result)
+
+	return StInt.new(result)
+
+
+func _sub(subtrahends: Array) -> StType:
+	var first = subtrahends[0]
+	var sum_of_rest = subtrahends.slice(1).reduce(func(sum, x): return sum + x)
+	var result = first - sum_of_rest
+
+	if result is float:
+		return StFloat.new(result)
+
+	return StInt.new(result)
+
+
+func _mul(factors: Array) -> StType:
+	var result = factors.reduce(func(sum, x): return sum * x)
+
+	if result is float:
+		return StFloat.new(result)
+
+	return StInt.new(result)
+
+
+func _div(divs: Array) -> StType:
+	var first = divs[0]
+	var product_of_rest = divs.slice(1).reduce(func(sum, x): return sum * x)
+	var result = first / product_of_rest
+	
+	if result is float:
+		return StFloat.new(result)
+
+	return StInt.new(result)
 
 
 func eval_ast(ast: StType, env: Env) -> StType:
