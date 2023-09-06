@@ -33,7 +33,7 @@ static func _eval_ast(ast: StType, env: Env) -> StType:
 
 
 static func eval(ast: StType, env: Env) -> StType:
-	if not ast is StList or ast is StVector:
+	if (not ast is StList) or (ast is StVector):
 		return _eval_ast(ast, env)
 
 	if ast.elements.is_empty():
@@ -76,6 +76,8 @@ static func eval(ast: StType, env: Env) -> StType:
 	var evaluated := _eval_ast(ast, env)
 	if evaluated is StErr:
 		return evaluated
+	if not evaluated.elements[0] is StFunction:
+		return StErr.new("First element of evaluated list must be a function")
 		
 	return evaluated.elements[0].value.call(
 		evaluated.elements.slice(1).map(func(e: StType): return e.value))
