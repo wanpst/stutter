@@ -1,4 +1,4 @@
-class_name StLambda
+class_name StFunction
 extends StType
 
 var value: Callable

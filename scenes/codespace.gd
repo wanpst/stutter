@@ -7,10 +7,10 @@ var repl_env := Env.new()
 
 
 func _ready() -> void:
-	repl_env.eset(StSymbol.new("+"), StLambda.new(Library.add))
-	repl_env.eset(StSymbol.new("-"), StLambda.new(Library.sub))
-	repl_env.eset(StSymbol.new("*"), StLambda.new(Library.mul))
-	repl_env.eset(StSymbol.new("/"), StLambda.new(Library.div))
+	repl_env.eset(StSymbol.new("+"), StFunction.new(Library.add))
+	repl_env.eset(StSymbol.new("-"), StFunction.new(Library.sub))
+	repl_env.eset(StSymbol.new("*"), StFunction.new(Library.mul))
+	repl_env.eset(StSymbol.new("/"), StFunction.new(Library.div))
 
 
 func _unhandled_input(event: InputEvent) -> void:
