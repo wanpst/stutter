@@ -12,4 +12,7 @@ func _to_string() -> String:
 	if abs(value) == INF or is_nan(value):
 		return str(value)
 
-	return str(value).pad_decimals(1)
+	if step_decimals(value) == 0:
+		return str(value) + ".0"
+
+	return str(value)
