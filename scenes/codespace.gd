@@ -7,10 +7,8 @@ var repl_env := Env.new()
 
 
 func _ready() -> void:
-	repl_env.eset(StSymbol.new("+"), StFunction.new(Library.add))
-	repl_env.eset(StSymbol.new("-"), StFunction.new(Library.sub))
-	repl_env.eset(StSymbol.new("*"), StFunction.new(Library.mul))
-	repl_env.eset(StSymbol.new("/"), StFunction.new(Library.div))
+	for symbol in Core.ns:
+		repl_env.eset(StSymbol.new(symbol), StFunction.new(Core.ns[symbol]))
 
 
 func _unhandled_input(event: InputEvent) -> void:

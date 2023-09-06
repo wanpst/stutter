@@ -71,6 +71,34 @@ static func eval(ast: StType, env: Env) -> StType:
 						return value_evaluated
 					let_env.eset(key, value_evaluated)
 				return eval(ast.elements[2], let_env)
+			"do":
+				var evaluated: StType
+				for element in ast.elements.slice(1):
+					evaluated = eval(element, env)
+					if evaluated is StErr:
+						return evaluated
+				return evaluated
+			"if":
+				var condition := eval(ast.elements[1], env)
+				if condition is StErr:
+					return condition
+
+				# condition is not nil or false
+				if ((not condition is StNil) and
+					(not (condition is StBool and condition.value == false))):
+					return eval(ast.elements[2], env)
+
+				# condition is nil or false, but there is no "else" parameter
+				if ast.elements.size() < 4:
+					return StNil.new()
+
+				# condition is nil or false
+				return eval(ast.elements[3], env)
+			"fn*":
+				return StFunction.new(
+					func(args: Array) -> StType:
+						var new_env := Env.new(env, ast.elements[1], args)
+						return eval(ast.elements[2], new_env))
 	
 	# just a function call
 	var evaluated := _eval_ast(ast, env)
@@ -79,5 +107,4 @@ static func eval(ast: StType, env: Env) -> StType:
 	if not evaluated.elements[0] is StFunction:
 		return StErr.new("First element of evaluated list must be a function")
 		
-	return evaluated.elements[0].value.call(
-		evaluated.elements.slice(1).map(func(e: StType): return e.value))
+	return evaluated.elements[0].value.call(evaluated.elements.slice(1))

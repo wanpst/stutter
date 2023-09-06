@@ -5,8 +5,13 @@ var outer: Env
 var data: Dictionary = {}
 
 
-func _init(p_outer: Env = null) -> void:
+func _init(p_outer: Env = null, binds: StList = null, exprs: Array = []) -> void:
 	outer = p_outer
+	if binds == null:
+		return
+
+	for i in binds.elements.size():
+		eset(binds.elements[i], exprs[i])
 
 
 func eset(key: StSymbol, value: StType) -> void:
