@@ -4,6 +4,7 @@ class_name Eval
 static func _eval_ast(ast: StType, env: Env) -> StType:
 	if ast is StSymbol:
 		return env.eget(ast)
+
 	elif ast is StList:
 		var evaluated: StList
 		if ast is StVector:
@@ -19,6 +20,7 @@ static func _eval_ast(ast: StType, env: Env) -> StType:
 				evaluated.push_back(element_evaluated)
 
 		return evaluated
+
 	elif ast is StHashmap:
 		var evaluated := StHashmap.new()
 
@@ -28,6 +30,7 @@ static func _eval_ast(ast: StType, env: Env) -> StType:
 				return evaluated.elements[key]
 
 		return evaluated
+
 	else:
 		return ast
 
@@ -53,6 +56,7 @@ static func eval(ast: StType, env: Env) -> StType:
 					return value_evaluated
 				env.eset(ast.elements[1], value_evaluated) 
 				return value_evaluated
+
 			"let*":
 				if ast.elements.size() != 3:
 					return StErr.new("let* expected 2 arguments, got " + str(ast.elements.size()-1))
@@ -71,6 +75,7 @@ static func eval(ast: StType, env: Env) -> StType:
 						return value_evaluated
 					let_env.eset(key, value_evaluated)
 				return eval(ast.elements[2], let_env)
+
 			"do":
 				var evaluated: StType
 				for element in ast.elements.slice(1):
@@ -78,7 +83,11 @@ static func eval(ast: StType, env: Env) -> StType:
 					if evaluated is StErr:
 						return evaluated
 				return evaluated
+
 			"if":
+				if ast.elements.size() < 3:
+					return StErr.new("if expected 2 arguments, got " + str(ast.elements.size()-1))
+
 				var condition := eval(ast.elements[1], env)
 				if condition is StErr:
 					return condition
@@ -94,11 +103,24 @@ static func eval(ast: StType, env: Env) -> StType:
 
 				# condition is nil or false
 				return eval(ast.elements[3], env)
+
 			"fn*":
+				if ast.elements.size() == 1:
+					return StErr.new("fn* expected at least 1 argument, got 0")
+
 				return StFunction.new(
 					func(args: Array) -> StType:
 						var new_env := Env.new(env, ast.elements[1], args)
-						return eval(ast.elements[2], new_env))
+
+						if ast.elements.size() == 2:
+							return StNil.new()
+					
+						var result: StType
+						for i in range(2, ast.elements.size()):
+							result = eval(ast.elements[i], new_env)
+							if result is StErr:
+								return result
+						return result)
 	
 	# just a function call
 	var evaluated := _eval_ast(ast, env)
