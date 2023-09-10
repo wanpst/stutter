@@ -1,12 +1,15 @@
+class_name Codespace
 extends Control
 
 @onready var code_edit := $"%CodeEdit" as CodeEdit
-@onready var output_label := $"%OutputLabel" as RichTextLabel
+static var output: RichTextLabel
 
 var repl_env := Env.new()
 
 
 func _ready() -> void:
+	output = $"%OutputLabel"
+
 	for symbol in Core.ns:
 		repl_env.eset(StSymbol.new(symbol), StFunction.new(Core.ns[symbol]))
 
@@ -16,6 +19,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		if not code_edit.text.is_empty():
 			rep(code_edit.text)
+
+
+static func print_to_output(input: String) -> void:
+	if not input.is_empty():
+		output.append_text(input + "\n")
 
 
 func read(input: String) -> StType:
@@ -32,5 +40,4 @@ func put(input: StType) -> String:
 
 func rep(input: String) -> void:
 	var result := put(Eval.eval(read(input), repl_env))
-	if not result.is_empty():
-		output_label.append_text(result + "\n")
+	Codespace.print_to_output(result)
