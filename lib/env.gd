@@ -11,6 +11,17 @@ func _init(p_outer: Env = null, binds: StList = null, exprs: Array = []) -> void
 		return
 
 	for i in binds.elements.size():
+		# variadic parameter
+		if binds.elements[i].value == "&":
+			# do nothing if the & symbol is the last parameter
+			if binds.elements[i] == binds.elements[-1]:
+				continue
+
+			eset(binds.elements[i+1], StList.new(exprs.slice(i)))
+
+			# any symbols after one that is a variadic parameter will be ignored
+			break
+
 		eset(binds.elements[i], exprs[i])
 
 
