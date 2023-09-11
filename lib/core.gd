@@ -1,6 +1,7 @@
 class_name Core
 
-static var ns := {
+# core functions implemented in GDScript
+static var ns_gd := {
 	"+": (
 	## Returns the sum of the contents of addends.
 	##
@@ -251,3 +252,11 @@ static var ns := {
 
 		return StBool.new(true)),
 }
+
+# core functions implemented in Stutter
+static var ns := [
+	"
+	(def! not (fn* [v]
+		(if v false true)))
+	",
+]

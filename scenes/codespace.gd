@@ -10,8 +10,11 @@ var repl_env := Env.new()
 func _ready() -> void:
 	output = $"%OutputLabel"
 
-	for symbol in Core.ns:
-		repl_env.eset(StSymbol.new(symbol), StFunction.new(Core.ns[symbol]))
+	for symbol in Core.ns_gd:
+		repl_env.eset(StSymbol.new(symbol), StFunction.new(Core.ns_gd[symbol]))
+
+	for function in Core.ns:
+		Eval.eval(read(function), repl_env)
 
 
 func _unhandled_input(event: InputEvent) -> void:
