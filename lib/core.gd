@@ -170,6 +170,10 @@ static var ns_gd := {
 	func count(args: Array) -> StType:
 		if args.size() != 1:
 			return StErr.new("count expected 1 argument, got " + str(args.size()))
+
+		if args[0] is StNil:
+			return StInt.new(0)
+
 		if not args[0] is StList:
 			return StErr.new("count argument 1 is not list or vector")
 
