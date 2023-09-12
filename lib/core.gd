@@ -116,7 +116,7 @@ static var ns_gd := {
    	func sstr(args: Array) -> StString:
 		var joined := "".join(
 			args.map(func(a: StType) -> String:
-				return StType.pr_str(a, false)))
+				return StType.pr_str(a, false, true)))
 
 		return StString.new(joined)),
 
@@ -132,10 +132,10 @@ static var ns_gd := {
 
 	"println": (
 	## Prints each of the arguments and returns nil.
-   	func prn(args: Array) -> StNil:
+   	func println(args: Array) -> StNil:
 		var joined := " ".join(
 			args.map(func(a: StType) -> String:
-				return StType.pr_str(a, false)))
+				return StType.pr_str(a, false, true)))
 
 		Codespace.print_to_output(joined)
 		return StNil.new()),
