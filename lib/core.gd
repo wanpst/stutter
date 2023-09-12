@@ -102,13 +102,40 @@ static var ns_gd := {
 
 		return StInt.new(result)),
 
-	"prn": (
-	## Prints each of the arguments and returns nil.
-   	func prn(args: Array) -> StNil:
-		# args elements as strings, joined by spaces
+	"pr-str": (
+	## Returns the arguments turned into readable strings and joined by spaces.
+   	func prstr(args: Array) -> StString:
 		var joined := " ".join(
 			args.map(func(a: StType) -> String:
 				return StType.pr_str(a, true)))
+
+		return StString.new(joined)),
+
+	"str": (
+	## Returns the arguments turned into strings.
+   	func sstr(args: Array) -> StString:
+		var joined := "".join(
+			args.map(func(a: StType) -> String:
+				return StType.pr_str(a, false)))
+
+		return StString.new(joined)),
+
+	"prn": (
+	## Prints each of the arguments readably and returns nil.
+   	func prn(args: Array) -> StNil:
+		var joined := " ".join(
+			args.map(func(a: StType) -> String:
+				return StType.pr_str(a, true)))
+
+		Codespace.print_to_output(joined)
+		return StNil.new()),
+
+	"println": (
+	## Prints each of the arguments and returns nil.
+   	func prn(args: Array) -> StNil:
+		var joined := " ".join(
+			args.map(func(a: StType) -> String:
+				return StType.pr_str(a, false)))
 
 		Codespace.print_to_output(joined)
 		return StNil.new()),
