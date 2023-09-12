@@ -8,7 +8,7 @@ func _init(p_elements: Dictionary = {})-> void:
 	elements = p_elements
 
 
-func _to_string() -> String:
+func pr_to_string(print_readably := false) -> String:
 	var processed := "{"
 
 	var pairs := []

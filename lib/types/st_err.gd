@@ -8,5 +8,5 @@ func _init(p_what: String = "") -> void:
 	what = p_what
 
 
-func _to_string() -> String:
+func pr_to_string(print_readably := false) -> String:
 	return "ERROR: " + what

@@ -8,18 +8,15 @@ func _init(p_value: String = "") -> void:
 	value = p_value
 
 
-func pretty_to_string(print_readably := false, skip_quotes := false) -> String:
+func pr_to_string(print_readably := false) -> String:
 	if value.begins_with("\u029e"):
 		return ":" + value.substr(1)
 
 	if print_readably:
-		# NOTE: c_escape() will escape single quotes; this is close enough!
-		if skip_quotes:
-			return value.json_escape()
-		else:
-			return '\"' + value.json_escape() + '\"'
+		var string_escaped := value \
+			.replace('\\', '\\\\') \
+			.replace('"', '\\"') \
+			.replace('\n', '\\n')
+		return '"' + string_escaped + '"'
 	else:
-		if skip_quotes:
-			return value
-		else:
-			return '\"' + value + '\"'
+		return value

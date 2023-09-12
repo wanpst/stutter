@@ -8,5 +8,5 @@ func _init(p_value: bool = false) -> void:
 	value = p_value
 
 
-func _to_string() -> String:
+func pr_to_string(print_readably := false) -> String:
 	return str(value)

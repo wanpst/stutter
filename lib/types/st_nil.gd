@@ -4,5 +4,5 @@ extends StType
 var value = null
 
 
-func _to_string() -> String:
+func pr_to_string(print_readably := false) -> String:
 	return "nil"

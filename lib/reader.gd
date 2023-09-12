@@ -145,7 +145,13 @@ func _read_atom() -> StType:
 	elif token == "nil":
 		return StNil.new()
 	elif string_match:
-		return StString.new(string_match.get_string(1).c_unescape())
+		var string_contents := string_match.get_string(1)
+		var string_unescaped := string_contents \
+			.replace('\\\\', '\u029e') \
+			.replace('\\"', '"') \
+			.replace('\\n', '\n') \
+			.replace('\u029e', '\\')
+		return StString.new(string_unescaped)
 	elif token[0] == '"':
 		return StErr.new("Unclosed string")
 	elif token[0] == ":":
