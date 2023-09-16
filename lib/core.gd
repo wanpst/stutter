@@ -295,6 +295,29 @@ static var ns_gd := {
 			return StErr.new("slurp expected 1 argument, got " + str(args.size()))
 		var file_str := FileAccess.open(args[0].value, FileAccess.READ).get_as_text()
 		return StString.new(file_str)),
+
+	"atom": (
+	func atom(args: Array) -> StType:
+		return StAtom.new(args[0])),
+
+	"atom?": (
+	func is_atom(args: Array) -> StType:
+		if args.size() != 1:
+			return StErr.new("atom? expected 1 argument, got " + str(args.size()))
+		return StBool.new(args[0] is StAtom)),
+
+	"deref": (
+	func deref(args: Array) -> StType:
+		if args.size() != 1:
+			return StErr.new("deref expected 1 argument, got " + str(args.size()))
+		return args[0].value),
+
+	"reset!": (
+	func reset(args: Array) -> StType:
+		if args.size() != 2:
+			return StErr.new("reset! expected 2 arguments, got " + str(args.size()))
+		args[0].value = args[1]
+		return args[0].value),
 }
 
 # core functions implemented in Stutter

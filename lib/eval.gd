@@ -1,14 +1,5 @@
 class_name Eval
 
-class StFnFunction extends StType:
-	var ast: StType
-	var params: StList
-	var env: Env
-	var fn: StFunction
-
-
-	func pr_to_string(print_readably := false) -> String:
-		return "#<function>"
 
 
 static func _eval_ast(ast: StType, env: Env) -> StType:
@@ -128,13 +119,13 @@ static func eval(ast: StType, env: Env) -> StType:
 					fn_data.ast = ast.elements[2]
 					fn_data.params = ast.elements[1]
 					fn_data.env = env
-					fn_data.fn = StFunction.new(
+					fn_data.value = \
 						func(args: Array) -> StType:
 							if ast.elements.size() == 2:
 								return StNil.new()
 
 							var new_env := Env.new(env, ast.elements[1], args)
-							return eval(ast.elements[2], new_env))
+							return eval(ast.elements[2], new_env)
 					return fn_data
 
 
@@ -154,7 +145,7 @@ static func eval(ast: StType, env: Env) -> StType:
 					str(fn_args.size()))
 			env = Env.new(fn.env, fn.params, fn_args)
 			continue
-		elif fn is StFunction:
+		if fn is StFunction:
 			return fn.value.call(fn_args)
 		else:
 			return StErr.new("First element of evaluated list must be a function")
