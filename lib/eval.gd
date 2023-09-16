@@ -92,10 +92,10 @@ static func eval(ast: StType, env: Env) -> StType:
 				"do":
 					var evaluated: StType
 					for element in ast.elements.slice(1, -1):
-						evaluated = _eval_ast(element, env)
+						evaluated = eval(element, env)
 						if evaluated is StErr:
 							return evaluated
-					ast = ast.back()
+					ast = ast.elements.back()
 					continue
 
 				"if":

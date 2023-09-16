@@ -282,12 +282,29 @@ static var ns_gd := {
 				return StBool.new(false)
 
 		return StBool.new(true)),
+
+	"read-string": (
+	func read_string(args: Array) -> StType:
+		if args.size() != 1:
+			return StErr.new("read-string expected 1 argument, got " + str(args.size()))
+		return Reader.new().read_str(args[0].value)),
+
+	"slurp": (
+	func slurp(args: Array) -> StType:
+		if args.size() != 1:
+			return StErr.new("slurp expected 1 argument, got " + str(args.size()))
+		var file_str := FileAccess.open(args[0].value, FileAccess.READ).get_as_text()
+		return StString.new(file_str)),
 }
 
 # core functions implemented in Stutter
 static var ns := [
-	"
+	'
 	(def! not (fn* [v]
 		(if v false true)))
-	",
+	',
+	'
+	(def! load-file (fn* [f]
+		(eval (read-string (str "(do " (slurp f) "\n" "nil)")))))
+	',
 ]
