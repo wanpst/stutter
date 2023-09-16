@@ -147,6 +147,11 @@ static func eval(ast: StType, env: Env) -> StType:
 
 		if fn is StFnFunction:
 			ast = fn.ast
+			if fn_args.size() < fn.params.elements.size():
+				return StErr.new("Function expected at least " + \
+					str(fn.params.elements.size()) + \
+					" arguments, got " + \
+					str(fn_args.size()))
 			env = Env.new(fn.env, fn.params, fn_args)
 			continue
 		elif fn is StFunction:
