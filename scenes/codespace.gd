@@ -44,6 +44,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		if not code_edit.text.is_empty():
 			rep(code_edit.text)
+	if event.is_action_pressed("codespace_clear_output"):
+		get_viewport().set_input_as_handled()
+		output.clear()
+
+
+func _on_prompt_text_submitted(new_text: String) -> void:
+	if not new_text.is_empty():
+		Codespace.print_to_output(rep(new_text))
 
 
 static func print_to_output(input: String) -> void:
@@ -52,7 +60,7 @@ static func print_to_output(input: String) -> void:
 
 
 func read(input: String) -> StType:
-	return Reader.new().read_str(input)
+	return Reader.new().read_str("(do " + input + ")")
 
 
 func put(input: StType) -> String:
@@ -63,6 +71,5 @@ func put(input: StType) -> String:
 	return StType.pr_str(input, true)
 
 
-func rep(input: String) -> void:
-	var result := put(Eval.eval(read(input), repl_env))
-	Codespace.print_to_output(result)
+func rep(input: String) -> String:
+	return put(Eval.eval(read(input), repl_env))

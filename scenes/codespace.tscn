@@ -1,6 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://cqmce3iyuu0pp"]
+[gd_scene load_steps=4 format=3 uid="uid://cqmce3iyuu0pp"]
 
 [ext_resource type="Script" path="res://scenes/codespace.gd" id="1_muhnm"]
+[ext_resource type="FontFile" uid="uid://cm8nhy03cg7ch" path="res://assets/fonts/Hack-Regular.ttf" id="2_xdqd3"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_g2of6"]
+number_color = Color(0.717647, 0.917647, 0.858824, 1)
+symbol_color = Color(0.670588, 0.788235, 1, 1)
+function_color = Color(0.87451, 0.87451, 0.87451, 1)
+member_variable_color = Color(0.87451, 0.87451, 0.87451, 1)
+color_regions = {
+"\" \"": Color(1, 0.929412, 0.627451, 1)
+}
 
 [node name="Codespace" type="Control"]
 layout_mode = 3
@@ -9,29 +19,35 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 1
 script = ExtResource("1_muhnm")
 metadata/_edit_lock_ = true
 
-[node name="VSplitContainer" type="VSplitContainer" parent="."]
-custom_minimum_size = Vector2(540, 400)
-layout_mode = 1
-anchors_preset = 8
+[node name="VSplitContainer" type="HSplitContainer" parent="."]
+custom_minimum_size = Vector2(940, 640)
+layout_mode = 2
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -100.0
-offset_right = 200.0
-offset_bottom = 100.0
+offset_left = -470.0
+offset_top = -265.0
+offset_right = 470.0
+offset_bottom = 265.0
 grow_horizontal = 2
 grow_vertical = 2
-split_offset = 84
+split_offset = -340
 
 [node name="CodeEdit" type="CodeEdit" parent="VSplitContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_xdqd3")
+theme_override_font_sizes/font_size = 14
+highlight_all_occurrences = true
+draw_tabs = true
+syntax_highlighter = SubResource("CodeHighlighter_g2of6")
 scroll_smooth = true
 scroll_past_end_of_file = true
 gutters_draw_line_numbers = true
@@ -44,19 +60,22 @@ auto_brace_completion_pairs = {
 "{": "}"
 }
 
-[node name="OutputPanel" type="PanelContainer" parent="VSplitContainer"]
+[node name="REPL" type="VSplitContainer" parent="VSplitContainer"]
+layout_mode = 2
+
+[node name="OutputPanel" type="PanelContainer" parent="VSplitContainer/REPL"]
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/OutputPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/REPL/OutputPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="OutputLabel" type="RichTextLabel" parent="VSplitContainer/OutputPanel/MarginContainer"]
+[node name="OutputLabel" type="RichTextLabel" parent="VSplitContainer/REPL/OutputPanel/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 2
@@ -64,3 +83,8 @@ bbcode_enabled = true
 scroll_following = true
 context_menu_enabled = true
 selection_enabled = true
+
+[node name="Prompt" type="LineEdit" parent="VSplitContainer/REPL"]
+layout_mode = 2
+
+[connection signal="text_submitted" from="VSplitContainer/REPL/Prompt" to="." method="_on_prompt_text_submitted"]
