@@ -1,12 +1,13 @@
 # stutter
 ## a [mal](https://github.com/kanaka/mal) implementation in pure GDScript
 You will need Godot 4.1.1 to run this project.
+Yes, it's licensed under the GPL.
 
 ## Probably Asked Questions
 ### WHY
 felt like it
 
-i'm also the pettiest person alive, and i've been watching people deride GDScript
+additionally, i'm the pettiest person alive, and i've been watching people deride GDScript
 for years now. i think if it can handle this, it can handle your walking simulator.
 
 ### IS IT FINISHED
