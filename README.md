@@ -27,4 +27,4 @@ if you have time to kill
 it made sense at the time
 
 ### WHAT'S WITH THE NAME
-it's another speech impediment
+it's another speech impediment. the godot icon is a robot. robots might... er... stutter? there was logic to it, and i've forgotten what it was.
