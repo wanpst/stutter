@@ -15,7 +15,7 @@ func _ready() -> void:
 
 	repl_env.eset(StSymbol.new("eval"), StFunction.new(
 		func seval(args: Array) -> StType:
-			if args.size() != 1:
+			if args.size() < 1:
 				return StErr.new("eval expected 1 argument, got " + str(args.size()))
 			return Eval.eval(args[0], repl_env)))
 

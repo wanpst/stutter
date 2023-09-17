@@ -150,7 +150,7 @@ static var ns_gd := {
 	##
 	## This returns false for vectors.
 	func is_list(args: Array) -> StType:
-		if args.size() != 1:
+		if args.size() < 1:
 			return StErr.new("list? expected 1 argument, got " + str(args.size()))
 
 		return StBool.new(args[0] is StList and not args[0] is StVector)),
@@ -158,7 +158,7 @@ static var ns_gd := {
 	"empty?": (
 	## Returns whether the first argument (list) is empty.
 	func is_empty(args: Array) -> StType:
-		if args.size() != 1:
+		if args.size() < 1:
 			return StErr.new("empty? expected 1 argument, got " + str(args.size()))
 		if not args[0] is StList:
 			return StErr.new("empty? argument 1 is not list or vector")
@@ -168,7 +168,7 @@ static var ns_gd := {
 	"count": (
 	## Returns the number of elements in the first argument (list).
 	func count(args: Array) -> StType:
-		if args.size() != 1:
+		if args.size() < 1:
 			return StErr.new("count expected 1 argument, got " + str(args.size()))
 
 		if args[0] is StNil:
@@ -285,13 +285,13 @@ static var ns_gd := {
 
 	"read-string": (
 	func read_string(args: Array) -> StType:
-		if args.size() != 1:
+		if args.size() < 1:
 			return StErr.new("read-string expected 1 argument, got " + str(args.size()))
 		return Reader.new().read_str(args[0].value)),
 
 	"slurp": (
 	func slurp(args: Array) -> StType:
-		if args.size() != 1:
+		if args.size() < 1:
 			return StErr.new("slurp expected 1 argument, got " + str(args.size()))
 		var file_str := FileAccess.open(args[0].value, FileAccess.READ).get_as_text()
 		return StString.new(file_str)),
@@ -302,13 +302,13 @@ static var ns_gd := {
 
 	"atom?": (
 	func is_atom(args: Array) -> StType:
-		if args.size() != 1:
+		if args.size() < 1:
 			return StErr.new("atom? expected 1 argument, got " + str(args.size()))
 		return StBool.new(args[0] is StAtom)),
 
 	"deref": (
 	func deref(args: Array) -> StType:
-		if args.size() != 1:
+		if args.size() < 1:
 			return StErr.new("deref expected 1 argument, got " + str(args.size()))
 		if (not args[0] is StAtom):
 			return StErr.new("deref argument 1 is not atom")
@@ -317,7 +317,7 @@ static var ns_gd := {
 
 	"reset!": (
 	func reset(args: Array) -> StType:
-		if args.size() != 2:
+		if args.size() < 2:
 			return StErr.new("reset! expected 2 arguments, got " + str(args.size()))
 		if (not args[0] is StAtom):
 			return StErr.new("reset! argument 1 is not atom")
