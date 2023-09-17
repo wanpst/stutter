@@ -310,12 +310,18 @@ static var ns_gd := {
 	func deref(args: Array) -> StType:
 		if args.size() != 1:
 			return StErr.new("deref expected 1 argument, got " + str(args.size()))
+		if (not args[0] is StAtom):
+			return StErr.new("deref argument 1 is not atom")
+
 		return args[0].value),
 
 	"reset!": (
 	func reset(args: Array) -> StType:
 		if args.size() != 2:
 			return StErr.new("reset! expected 2 arguments, got " + str(args.size()))
+		if (not args[0] is StAtom):
+			return StErr.new("reset! argument 1 is not atom")
+
 		args[0].value = args[1]
 		return args[0].value),
 }
